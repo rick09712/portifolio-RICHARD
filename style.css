@@ -1,0 +1,74 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
+    background-color: #1a1a1a;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+/* --- MUDANÇA CRUCIAL 1 --- */
+/* O canvas agora fica na posição normal, não mais escondido atrás */
+canvas {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    /* REMOVIDO: z-index: -1; */
+}
+
+/* --- MUDANÇA CRUCIAL 2 --- */
+/* A camada de texto agora fica EXPLICITAMENTE na frente de tudo */
+.overlay {
+    position: absolute;
+    top: 0; /* Adicionado para garantir o alinhamento */
+    left: 0; /* Adicionado para garantir o alinhamento */
+    width: 100%;
+    height: 100%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1; /* Garante que o texto fique na camada 1 (acima do canvas na camada 0) */
+    pointer-events: none; /* Permite que cliques "atravessem" o overlay e cheguem no canvas */
+}
+
+/* Habilitando cliques apenas nos links e botões */
+.overlay a, .overlay .menu-button {
+    pointer-events: auto;
+}
+
+/* O resto do CSS continua o mesmo */
+.top-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+.menu-button { cursor: pointer; }
+.menu-line { width: 32px; height: 2px; background-color: white; margin: 6px 0; }
+.main-content { text-align: center; }
+
+.subtitle-link {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.subtitle-link:hover { color: #aaaaaa; }
+.subtitle { font-size: 14px; font-weight: 500; letter-spacing: 2px; margin-bottom: 0; }
+
+.title {
+    font-size: 5vw;
+    font-weight: 400;
+    letter-spacing: -2px;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.bottom-content { padding-bottom: 20px; }
+.interactive-text { font-size: 14px; font-weight: 500; letter-spacing: 2px; }
+
+.fade-out { opacity: 0; pointer-events: none; }
