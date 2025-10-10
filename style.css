@@ -1,74 +1,79 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+body{margin:0;overflow:hidden;background-color:#000;font-family:'Helvetica',Arial,sans-serif;color:white}
+canvas{position:fixed;top:0;left:0;z-index:1; cursor: pointer;}
+.page {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
+    opacity: 0; pointer-events: none; transition: opacity 0.5s ease-in-out;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
 }
-
-body {
-    overflow: hidden;
-    background-color: #1a1a1a;
-    font-family: 'Poppins', sans-serif;
-    color: white;
+.page.active { opacity: 1; pointer-events: auto; }
+#home { pointer-events: none; }
+#home > * { pointer-events: auto; }
+#home .main-title{font-size:5rem;font-weight:bold;text-align:center;letter-spacing:2px;margin:0;opacity:1;transition:opacity 1.5s ease-out}
+#home .main-title.fade-out{opacity:0}
+#home .subtitle-link{position:fixed; left:50%; transform:translateX(-50%); z-index:2; font-size:.8rem; letter-spacing:4px; text-transform:uppercase; color:white; text-decoration:none; transition:opacity .3s;}
+#home .subtitle-link:hover{opacity:.7}
+#home .top-link{top:60px}
+#home .bottom-link{bottom:60px}
+.page-title { font-size: 6rem; font-weight: 100; color: rgba(255, 255, 255, 0.8); }
+.header{position:fixed;top:0;right:0;padding:40px;z-index:11;}
+.menu-icon{cursor:pointer; width: 35px; height: 26px; position: relative; pointer-events: auto !important;}
+.menu-icon span{display:block;width:35px;height:2px;background-color:white;margin:8px 0; transition: transform 0.3s, opacity 0.3s;}
+.menu-icon.active span:nth-child(1) { transform: translateY(10px) rotate(45deg); }
+.menu-icon.active span:nth-child(2) { opacity: 0; }
+.menu-icon.active span:nth-child(3) { transform: translateY(-10px) rotate(-45deg); }
+.menu-overlay {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.4s, visibility 0.4s;}
+.menu-overlay.active {opacity: 1; visibility: visible; pointer-events: auto;}
+.menu-overlay nav { display: flex; flex-direction: column; text-align: center; }
+.menu-overlay nav a {color: white; text-decoration: none; font-size: 4rem; font-weight: 100; letter-spacing: 2px; margin: 20px 0; transition: opacity 0.3s;}
+.menu-overlay nav a:hover {opacity: 0.7;}
+#work, #about { overflow-y: auto; display: block; }
+.project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; padding: 10rem 4rem 4rem 4rem; width: 100%; max-width: 1600px; margin: 0 auto; box-sizing: border-box; }
+.project-item { position: relative; overflow: hidden; aspect-ratio: 16 / 9; cursor: pointer; background-color: #222; }
+.project-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+.project-item:hover img { transform: scale(1.1); }
+.project-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0)); opacity: 0; transition: opacity 0.4s ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; box-sizing: border-box; }
+.project-item:hover .project-overlay { opacity: 1; }
+.project-overlay h3 { margin: 0; font-size: 1.5rem; transform: translateY(20px); transition: transform 0.4s ease; }
+.project-overlay p { margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #ccc; transform: translateY(20px); transition: transform 0.4s ease 0.1s; }
+.project-item:hover .project-overlay h3, .project-item:hover .project-overlay p { transform: translateY(0); }
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 20; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.4s, visibility 0.4s; }
+.modal.active { opacity: 1; visibility: visible; pointer-events: auto; }
+.modal-content { background-color: #111; padding: 3rem; border-radius: 8px; width: 80%; max-width: 900px; max-height: 80vh; overflow-y: auto; position: relative; transform: scale(0.9); transition: transform 0.4s; }
+.modal.active .modal-content { transform: scale(1); }
+.modal-close-button { position: absolute; top: 15px; right: 20px; font-size: 2.5rem; color: #888; cursor: pointer; transition: color 0.3s; }
+.modal-close-button:hover { color: #fff; }
+.modal-content h2 { font-size: 2.5rem; margin-top: 0; }
+.modal-content p { color: #ccc; line-height: 1.6; }
+.modal-content .tech { font-style: italic; color: #00ffff; }
+.modal-links { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.modal-links a { display: inline-block; padding: 0.8rem 1.2rem; background-color: #00ffff; color: #000; text-decoration: none; border-radius: 4px; transition: background-color 0.3s; flex: 1; text-align: center; font-weight: bold; }
+.modal-links a:hover { background-color: #fff; }
+.modal-links a.backend-link { background-color: #444; color: #eee; }
+.modal-links a.backend-link:hover { background-color: #666; }
+.about-container { display: flex; align-items: center; gap: 4rem; padding: 2rem; max-width: 1200px; }
+.about-image { flex: 1; }
+.about-image img { width: 100%; border-radius: 50%; aspect-ratio: 1 / 1; object-fit: cover; object-position: top; }
+.about-text { flex: 2; }
+.about-text h2 { font-size: 3rem; font-weight: bold; margin-top: 0; color: #00ffff; min-height: 58px; }
+.about-text p { font-size: 1.1rem; line-height: 1.7; color: #ddd; }
+.about-text strong { color: #fff; }
+.contact-container { text-align: center; max-width: 800px; padding: 2rem; }
+.contact-container h2 { font-size: 3rem; font-weight: bold; color: #00ffff; margin-bottom: 1rem; }
+.contact-container p { font-size: 1.2rem; color: #ddd; line-height: 1.7; margin-bottom: 3rem; }
+.contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.contact-link { display: inline-block; padding: 1rem 2rem; border: 1px solid #00ffff; color: #00ffff; text-decoration: none; font-size: 1rem; font-weight: bold; border-radius: 4px; transition: background-color 0.3s, color 0.3s; }
+.contact-link:hover { background-color: #00ffff; color: #000; }
+@media (max-width: 768px) {
+    #home .main-title { font-size: 2.5rem; }
+    .menu-overlay nav a { font-size: 2rem; margin: 15px 0; }
+    .page-title { font-size: 3rem; }
+    #home .subtitle-link { font-size: 0.7rem; }
+    .project-grid { grid-template-columns: 1fr; padding: 8rem 2rem 2rem 2rem; }
+    .modal-content { padding: 2rem; width: 90%; }
+    .modal-content h2 { font-size: 2rem; }
+    .about-container { flex-direction: column; text-align: center; gap: 2rem; padding-top: 6rem; overflow-y: auto; }
+    .about-image { width: 200px; height: 200px; }
+    .about-text h2 { font-size: 2.5rem; min-height: 48px;}
+    .contact-container h2 { font-size: 2.5rem; }
+    .contact-links { flex-direction: column; align-items: center; }
 }
-
-/* --- MUDANÇA CRUCIAL 1 --- */
-/* O canvas agora fica na posição normal, não mais escondido atrás */
-canvas {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    /* REMOVIDO: z-index: -1; */
-}
-
-/* --- MUDANÇA CRUCIAL 2 --- */
-/* A camada de texto agora fica EXPLICITAMENTE na frente de tudo */
-.overlay {
-    position: absolute;
-    top: 0; /* Adicionado para garantir o alinhamento */
-    left: 0; /* Adicionado para garantir o alinhamento */
-    width: 100%;
-    height: 100%;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 1; /* Garante que o texto fique na camada 1 (acima do canvas na camada 0) */
-    pointer-events: none; /* Permite que cliques "atravessem" o overlay e cheguem no canvas */
-}
-
-/* Habilitando cliques apenas nos links e botões */
-.overlay a, .overlay .menu-button {
-    pointer-events: auto;
-}
-
-/* O resto do CSS continua o mesmo */
-.top-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; }
-.menu-button { cursor: pointer; }
-.menu-line { width: 32px; height: 2px; background-color: white; margin: 6px 0; }
-.main-content { text-align: center; }
-
-.subtitle-link {
-    text-decoration: none;
-    color: inherit;
-    transition: color 0.3s ease;
-    position: absolute;
-    top: 25%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-.subtitle-link:hover { color: #aaaaaa; }
-.subtitle { font-size: 14px; font-weight: 500; letter-spacing: 2px; margin-bottom: 0; }
-
-.title {
-    font-size: 5vw;
-    font-weight: 400;
-    letter-spacing: -2px;
-    transition: opacity 1.5s ease-in-out;
-}
-
-.bottom-content { padding-bottom: 20px; }
-.interactive-text { font-size: 14px; font-weight: 500; letter-spacing: 2px; }
-
-.fade-out { opacity: 0; pointer-events: none; }
