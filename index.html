@@ -4,85 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Richard Villalba - Portfólio</title>
-    <style>
-        /* --- ESTILOS GERAIS --- */
-        body{margin:0;overflow:hidden;background-color:#000;font-family:'Helvetica',Arial,sans-serif;color:white}
-        canvas{position:fixed;top:0;left:0;z-index:1; cursor: pointer;}
-        .page {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
-            opacity: 0; pointer-events: none; transition: opacity 0.5s ease-in-out;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .page.active { opacity: 1; pointer-events: auto; }
-        #home { pointer-events: none; }
-        #home > * { pointer-events: auto; }
-        #home .main-title{font-size:5rem;font-weight:bold;text-align:center;letter-spacing:2px;margin:0;opacity:1;transition:opacity 1.5s ease-out}
-        #home .main-title.fade-out{opacity:0}
-        #home .subtitle-link{position:fixed; left:50%; transform:translateX(-50%); z-index:2; font-size:.8rem; letter-spacing:4px; text-transform:uppercase; color:white; text-decoration:none; transition:opacity .3s;}
-        #home .subtitle-link:hover{opacity:.7}
-        #home .top-link{top:60px}
-        #home .bottom-link{bottom:60px}
-        .page-title { font-size: 6rem; font-weight: 100; color: rgba(255, 255, 255, 0.8); }
-        .header{position:fixed;top:0;right:0;padding:40px;z-index:11;}
-        .menu-icon{cursor:pointer; width: 35px; height: 26px; position: relative; pointer-events: auto !important;}
-        .menu-icon span{display:block;width:35px;height:2px;background-color:white;margin:8px 0; transition: transform 0.3s, opacity 0.3s;}
-        .menu-icon.active span:nth-child(1) { transform: translateY(10px) rotate(45deg); }
-        .menu-icon.active span:nth-child(2) { opacity: 0; }
-        .menu-icon.active span:nth-child(3) { transform: translateY(-10px) rotate(-45deg); }
-        .menu-overlay {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.4s, visibility 0.4s;}
-        .menu-overlay.active {opacity: 1; visibility: visible; pointer-events: auto;}
-        .menu-overlay nav { display: flex; flex-direction: column; text-align: center; }
-        .menu-overlay nav a {color: white; text-decoration: none; font-size: 4rem; font-weight: 100; letter-spacing: 2px; margin: 20px 0; transition: opacity 0.3s;}
-        .menu-overlay nav a:hover {opacity: 0.7;}
-        #work, #about { overflow-y: auto; display: block; }
-        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; padding: 10rem 4rem 4rem 4rem; width: 100%; max-width: 1600px; margin: 0 auto; box-sizing: border-box; }
-        .project-item { position: relative; overflow: hidden; aspect-ratio: 16 / 9; cursor: pointer; background-color: #222; }
-        .project-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
-        .project-item:hover img { transform: scale(1.1); }
-        .project-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0)); opacity: 0; transition: opacity 0.4s ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; box-sizing: border-box; }
-        .project-item:hover .project-overlay { opacity: 1; }
-        .project-overlay h3 { margin: 0; font-size: 1.5rem; transform: translateY(20px); transition: transform 0.4s ease; }
-        .project-overlay p { margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #ccc; transform: translateY(20px); transition: transform 0.4s ease 0.1s; }
-        .project-item:hover .project-overlay h3, .project-item:hover .project-overlay p { transform: translateY(0); }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 20; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.4s, visibility 0.4s; }
-        .modal.active { opacity: 1; visibility: visible; pointer-events: auto; }
-        .modal-content { background-color: #111; padding: 3rem; border-radius: 8px; width: 80%; max-width: 900px; max-height: 80vh; overflow-y: auto; position: relative; transform: scale(0.9); transition: transform 0.4s; }
-        .modal.active .modal-content { transform: scale(1); }
-        .modal-close-button { position: absolute; top: 15px; right: 20px; font-size: 2.5rem; color: #888; cursor: pointer; transition: color 0.3s; }
-        .modal-close-button:hover { color: #fff; }
-        .modal-content h2 { font-size: 2.5rem; margin-top: 0; }
-        .modal-content p { color: #ccc; line-height: 1.6; }
-        .modal-content .tech { font-style: italic; color: #00ffff; }
-        .modal-content a { display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background-color: #00ffff; color: #000; text-decoration: none; border-radius: 4px; transition: background-color 0.3s; }
-        .modal-content a:hover { background-color: #fff; }
-        .about-container { display: flex; align-items: center; gap: 4rem; padding: 2rem; max-width: 1200px; }
-        .about-image { flex: 1; }
-        .about-image img { width: 100%; border-radius: 50%; aspect-ratio: 1 / 1; object-fit: cover; object-position: top; }
-        .about-text { flex: 2; }
-        .about-text h2 { font-size: 3rem; font-weight: bold; margin-top: 0; color: #00ffff; min-height: 58px; }
-        .about-text p { font-size: 1.1rem; line-height: 1.7; color: #ddd; }
-        .about-text strong { color: #fff; }
-        .contact-container { text-align: center; max-width: 800px; padding: 2rem; }
-        .contact-container h2 { font-size: 3rem; font-weight: bold; color: #00ffff; margin-bottom: 1rem; }
-        .contact-container p { font-size: 1.2rem; color: #ddd; line-height: 1.7; margin-bottom: 3rem; }
-        .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
-        .contact-link { display: inline-block; padding: 1rem 2rem; border: 1px solid #00ffff; color: #00ffff; text-decoration: none; font-size: 1rem; font-weight: bold; border-radius: 4px; transition: background-color 0.3s, color 0.3s; }
-        .contact-link:hover { background-color: #00ffff; color: #000; }
-        @media (max-width: 768px) {
-            #home .main-title { font-size: 2.5rem; }
-            .menu-overlay nav a { font-size: 2rem; margin: 15px 0; }
-            .page-title { font-size: 3rem; }
-            #home .subtitle-link { font-size: 0.7rem; }
-            .project-grid { grid-template-columns: 1fr; padding: 8rem 2rem 2rem 2rem; }
-            .modal-content { padding: 2rem; width: 90%; }
-            .modal-content h2 { font-size: 2rem; }
-            .about-container { flex-direction: column; text-align: center; gap: 2rem; padding-top: 6rem; overflow-y: auto; }
-            .about-image { width: 200px; height: 200px; }
-            .about-text h2 { font-size: 2.5rem; min-height: 48px;}
-            .contact-container h2 { font-size: 2.5rem; }
-            .contact-links { flex-direction: column; align-items: center; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header class="header"><div class="menu-icon"><span></span><span></span><span></span></div></header>
@@ -111,12 +33,12 @@
 
         <section id="work" class="page">
             <div class="project-grid">
-                <div class="project-item" data-title="Configurador de Produto 3D" data-description="Uma aplicação web interativa que permite ao usuário customizar um produto em 3D em tempo real. O usuário pode alterar cores, materiais e componentes do modelo, com as mudanças refletidas instantaneamente. Este projeto demonstra a integração entre a interface do usuário (HTML/CSS) e uma cena 3D complexa gerenciada com Three.js." data-tech="Three.js / JavaScript / HTML5 / CSS3" data-link="https://rick09712.github.io/configurador-3d/"><img src="./images/proj1.jpg" alt="Configurador de Produto 3D"><div class="project-overlay"><h3>Configurador de Produto 3D</h3><p>Three.js / JavaScript</p></div></div>
-                <div class="project-item" data-title="Chatbot com Análise de Sentimento" data-description="Um chatbot conversacional com uma IA de backend que analisa o sentimento das frases do usuário em tempo real. O frontend, construído com JavaScript, consome uma API REST feita em Python (Flask) e hospedada na nuvem." data-tech="JavaScript / Python / Flask / API REST / Deploy na Nuvem" data-link="https://rick09712.github.io/chatbot-frontend/"><img src="./images/proj2.jpg" alt="Projeto 2"><div class="project-overlay"><h3>Chatbot com Análise de Sentimento</h3><p>JavaScript / Python / IA</p></div></div>
-                <div class="project-item" data-title="API REST para E-commerce" data-description="Desenvolvimento do backend para uma aplicação de e-commerce, criando uma API RESTful para gerenciar produtos, usuários e pedidos, seguindo as melhores práticas de desenvolvimento seguro." data-tech="Node.js / Express / JavaScript / REST API" data-link="https://github.com/SeuUsuario/API-REST-Ecommerce"><img src="./images/proj3.jpg" alt="Projeto 3"><div class="project-overlay"><h3>API REST para E-commerce</h3><p>Node.js / API</p></div></div>
-                <div class="project-item" data-title="Painel de Controle IoT" data-description="Uma aplicação web que simula um dashboard para monitorar e controlar dispositivos eletrônicos, conectando conceitos de hardware (experiência em eletrônica) e software." data-tech="JavaScript / HTML5 / CSS3 / Chart.js" data-link="https://github.com/SeuUsuario/Painel-IoT"><img src="./images/proj4.jpg" alt="Projeto 4"><div class="project-overlay"><h3>Painel de Controle IoT</h3><p>JavaScript / Eletrônica</p></div></div>
-                <div class="project-item" data-title="Dashboard de Visualização de Dados" data-description="Dashboard interativo que consome dados de uma API pública e gratuita em tempo real e os exibe em gráficos e tabelas dinâmicas." data-tech="JavaScript / Fetch API / REST APIs" data-link="https://github.com/SeuUsuario/Dashboard-De-Dados"><img src="./images/proj5.jpg" alt="Projeto 5"><div class="project-overlay"><h3>Dashboard de Dados</h3><p>APIs / Visualização de Dados</p></div></div>
-                <div class="project-item" data-title="Web Scraper com Python" data-description="Um script que coleta e estrutura dados de websites de forma automatizada, salvando as informações em uma planilha para análise posterior." data-tech="Python / BeautifulSoup / Requests" data-link="https://github.com/SeuUsuario/Web-Scraper-Python"><img src="./images/proj6.jpg" alt="Projeto 6"><div class="project-overlay"><h3>Web Scraper Automatizado</h3><p>Python / Automação</p></div></div>
+                <div class="project-item" data-title="Configurador de Produto 3D" data-description="Uma aplicação web interativa que permite ao usuário customizar um produto em 3D em tempo real. O usuário pode alterar cores, materiais e componentes do modelo, com as mudanças refletidas instantaneamente. Este projeto demonstra a integração entre a interface do usuário (HTML/CSS) e uma cena 3D complexa gerenciada com Three.js." data-tech="Three.js / JavaScript / HTML5 / CSS3" data-link="https://rick09712.github.io/configurador-3d/" data-link-backend="#"><img src="./images/proj1.jpg" alt="Configurador de Produto 3D"><div class="project-overlay"><h3>Configurador de Produto 3D</h3><p>Three.js / JavaScript</p></div></div>
+                <div class="project-item" data-title="Chatbot com Análise de Sentimento" data-description="Um chatbot conversacional com uma IA de backend que analisa o sentimento das frases do usuário em tempo real. O frontend, construído com JavaScript, consome uma API REST feita em Python (Flask) e hospedada na nuvem." data-tech="JavaScript / Python / Flask / API REST / Deploy na Nuvem" data-link="https://rick09712.github.io/chatbot-frontend/" data-link-backend="#"><img src="./images/proj2.jpg" alt="Projeto 2"><div class="project-overlay"><h3>Chatbot com Análise de Sentimento</h3><p>JavaScript / Python / IA</p></div></div>
+                <div class="project-item" data-title="API REST para E-commerce" data-description="Desenvolvimento do backend para uma aplicação de e-commerce, criando uma API RESTful para gerenciar produtos, usuários e pedidos, seguindo as melhores práticas de desenvolvimento seguro." data-tech="Node.js / Express / JavaScript / REST API" data-link="#" data-link-backend="https://cop-ecommerce-api.onrender.com"><img src="./images/proj3.jpg" alt="Projeto 3"><div class="project-overlay"><h3>API REST para E-commerce</h3><p>Node.js / API</p></div></div>
+                <div class="project-item" data-title="Painel de Controle IoT" data-description="Uma aplicação web que simula um dashboard para monitorar e controlar dispositivos eletrônicos, conectando conceitos de hardware (experiência em eletrônica) e software." data-tech="JavaScript / HTML5 / CSS3 / Chart.js" data-link="#" data-link-backend="#"><img src="./images/proj4.jpg" alt="Projeto 4"><div class="project-overlay"><h3>Painel de Controle IoT</h3><p>JavaScript / Eletrônica</p></div></div>
+                <div class="project-item" data-title="Dashboard de Visualização de Dados" data-description="Dashboard interativo que consome dados de uma API pública e gratuita em tempo real e os exibe em gráficos e tabelas dinâmicas." data-tech="JavaScript / Fetch API / REST APIs" data-link="#" data-link-backend="#"><img src="./images/proj5.jpg" alt="Projeto 5"><div class="project-overlay"><h3>Dashboard de Dados</h3><p>APIs / Visualização de Dados</p></div></div>
+                <div class="project-item" data-title="Web Scraper com Python" data-description="Um script que coleta e estrutura dados de websites de forma automatizada, salvando as informações em uma planilha para análise posterior." data-tech="Python / BeautifulSoup / Requests" data-link="#" data-link-backend="#"><img src="./images/proj6.jpg" alt="Projeto 6"><div class="project-overlay"><h3>Web Scraper Automatizado</h3><p>Python / Automação</p></div></div>
             </div>
         </section>
 
@@ -144,7 +66,10 @@
             <h2 id="modal-title">Título do Projeto</h2>
             <p id="modal-description">Descrição do projeto...</p>
             <p><strong>Tecnologias:</strong> <span id="modal-tech" class="tech"></span></p>
-            <a id="modal-link" href="#" target="_blank">Ver Projeto Online</a>
+            <div class="modal-links">
+                <a id="modal-link-fullstack" href="#" target="_blank">Ver Projeto Completo</a>
+                <a id="modal-link-backend" href="#" target="_blank" class="backend-link">Ver Somente a API (Backend)</a>
+            </div>
         </div>
     </div>
     
