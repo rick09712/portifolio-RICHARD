@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
-// --- Variáveis Globais ---
 let camera, scene, renderer;
 let robotHead, headBone;
 let mixer;
@@ -16,11 +15,9 @@ let wireframeMaterial;
 let isWireframeMode = false;
 let resizeTimer; 
 
-// --- Inicialização ---
 init();
 
 function init() {
-    // Cena, Câmera e Renderizador
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, -0.2, 3.5); 
@@ -30,22 +27,19 @@ function init() {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
-    document.body.appendChild(renderer.domElement);
+    document.body.insertBefore(renderer.domElement, document.body.firstChild);
 
-    // Ambiente HDR e Luzes
     new RGBELoader().load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_03_1k.hdr', (texture) => {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         scene.environment = texture;
     });
     const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
-    // AQUI A CORREÇÃO: DirectionalLight com "al"
     const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
     directionalLight.position.set(5, 10, 5);
     scene.add(directionalLight);
     wireframeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.8 });
 
-    // Carregar o Modelo do Robô
     const loader = new GLTFLoader();
     loader.load(
         'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/models/gltf/RobotExpressive/RobotExpressive.glb',
@@ -74,14 +68,11 @@ function init() {
         undefined, (error) => console.error('Um erro ocorreu ao carregar o robô', error)
     );
 
-    // Eventos e Animação
     window.addEventListener('resize', onWindowResize);
     window.addEventListener('mousemove', onPointerMove);
     window.addEventListener('touchmove', onPointerMove);
     renderer.setAnimationLoop(animate);
 }
-
-// --- Funções de Interação e Navegação ---
 
 function setupAllInteractions(animations) {
     const menuIcon = document.querySelector('.menu-icon');
@@ -93,14 +84,12 @@ function setupAllInteractions(animations) {
     const modal = document.querySelector('#project-modal');
     const closeButton = document.querySelector('.modal-close-button');
 
-    // Lógica do Menu Overlay
     menuIcon.addEventListener('click', () => {
         menuOverlay.classList.toggle('active');
         menuIcon.classList.toggle('active');
         triggerNextExpression(animations);
     });
 
-    // Lógica de Navegação para os links do Menu
     navLinks.forEach(link => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
@@ -111,13 +100,11 @@ function setupAllInteractions(animations) {
         });
     });
 
-    // Link "VIEW ALL PROJECTS" agora navega para a página Work
     topLink.addEventListener('click', (event) => {
         event.preventDefault();
         navigateTo('work');
     });
 
-    // Lógica do Click & Hold para o Modo Raio-X
     const holdTriggers = [bottomLink, renderer.domElement];
     holdTriggers.forEach(element => {
         element.addEventListener('mousedown', () => setWireframeMode(true));
@@ -127,20 +114,19 @@ function setupAllInteractions(animations) {
         element.addEventListener('touchend', () => setWireframeMode(false));
     });
 
-    // Abrir Modal do Projeto
     projectItems.forEach(item => {
         item.addEventListener('click', () => {
             const projectData = {
                 title: item.dataset.title,
                 description: item.dataset.description,
                 tech: item.dataset.tech,
-                link: item.dataset.link
+                link: item.dataset.link,
+                linkBackend: item.dataset.linkBackend
             };
             openModal(projectData);
         });
     });
 
-    // Fechar Modal do Projeto
     closeButton.addEventListener('click', closeModal);
     modal.addEventListener('click', (event) => {
         if (event.target === modal) {
@@ -154,13 +140,24 @@ function openModal(data) {
     document.querySelector('#modal-title').textContent = data.title;
     document.querySelector('#modal-description').textContent = data.description;
     document.querySelector('#modal-tech').textContent = data.tech;
-    const linkElement = document.querySelector('#modal-link');
+    
+    const linkFullstack = document.querySelector('#modal-link-fullstack');
+    const linkBackend = document.querySelector('#modal-link-backend');
+
     if (data.link && data.link !== '#') {
-        linkElement.href = data.link;
-        linkElement.style.display = 'inline-block';
+        linkFullstack.href = data.link;
+        linkFullstack.style.display = 'inline-block';
     } else {
-        linkElement.style.display = 'none';
+        linkFullstack.style.display = 'none';
     }
+
+    if (data.linkBackend && data.linkBackend !== '#') {
+        linkBackend.href = data.linkBackend;
+        linkBackend.style.display = 'inline-block';
+    } else {
+        linkBackend.style.display = 'none';
+    }
+    
     modal.classList.add('active');
 }
 
