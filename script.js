@@ -72,6 +72,22 @@ function init() {
     window.addEventListener('mousemove', onPointerMove);
     window.addEventListener('touchmove', onPointerMove);
     renderer.setAnimationLoop(animate);
+    
+    wakeUpServices();
+}
+
+function wakeUpServices() {
+    const serviceUrls = [
+        'https://chatbot-backend-m7lg.onrender.com',
+        'https://cop-ecommerce-api.onrender.com'
+    ];
+
+    console.log('Enviando pings para acordar os servidores...');
+    serviceUrls.forEach(url => {
+        fetch(url, { mode: 'no-cors' })
+            .then(() => console.log(`Ping enviado para ${url}`))
+            .catch(() => console.log(`Ping para ${url} enviado (erro esperado se estiver dormindo).`));
+    });
 }
 
 function setupAllInteractions(animations) {
