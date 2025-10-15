@@ -132,6 +132,9 @@ function setupAllInteractions(animations) {
 
     projectItems.forEach(item => {
         item.addEventListener('click', () => {
+            if (item.classList.contains('in-production')) {
+                return;
+            }
             const projectData = {
                 title: item.dataset.title,
                 description: item.dataset.description,
